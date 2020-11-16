@@ -51,7 +51,7 @@ const Question = ( {navigation} ) => {
         <View style={styles.container}>
             
             {/* <Image source={{uri:questionState.image}} resizeMode="cover" style={styles.questionImage}/> */}
-            <Text style={styles.questionTitle}>{questionState.title}</Text>
+            <Text style={styles.questionTitle}>{questionState.title + ' / 10'}</Text>
             <Text style={styles.question}>{questionState.question}</Text>
             <View style={styles.answerList}>
                 <ScrollView>
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
         color:"#fff"
     },
     progressBar: {
-      marginVertical: 10
+      marginVertical: 30
     },
     buttonGroup: {
       flexDirection: 'row',

@@ -1,133 +1,197 @@
-import React,{useEffect,useState} from 'react';
-import {View,Text,Image,ScrollView,StyleSheet, Button, TouchableOpacity, ProgressBarAndroid} from 'react-native'
-import { createStackNavigator } from '@react-navigation/stack';
-import questionnaire from '../questionData';
+import React, { useState, useEffect } from 'react'
+import {View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native'
+// 상태바
+import { StatusBar } from 'expo-status-bar';
+// 결과 데이터
+import resultData from '../resultData';
+// 중간 선
+import Dash from 'react-native-dash';
+// 공유하기 기능
+import { Share } from 'react-native';
+// 파이어베이스 연결
+import {firebase_db} from '../firebaseConfig';
+// 로딩페이지
+import ResultLoading from "../components/ResultLoading";
+// import Loading from "../components/Loading";
+// 사용자 id 생성
+import Constants from 'expo-constants';
 
-const Question = ( {navigation} ) => {
 
-    // const [questionState, setQuestionState] = useState({
-    //   id: 2,
-    //   previousId: 1,
-    //   nextId: 3,
-    //   type: 'question',
-    //   content: {
-    //     title: 'Question 1',
-    //     question: '현재 수중에 1000만원이 있다. 최고의 수익률을 낼 수 있는 방법은?',
-    //     options: [
-    //       { id: 1, title: '스캘핑- 초단위 거래로 1~3% 띄기를 하며 회전율을 높인다.' },
-    //       { id: 2, title: '단타- 최대 1주일을 예상하며, 10%이상을 목표로 한다.' },
-    //       { id: 3, title: '스윙- 최대 3개월까지 보유하며, 저점에 있는 종목을 골라 30% 이상의 수익을 목표로 한다.' },
-    //       { id: 4, title: '장투- 미래에 유망한 종목을 타겟으로, 최소 6개월 이상 보유하며 수익을 극대화한다.' },
-    //     ],
-    //   },
-    // });
+export default function ResultPage( {navigation} ){
+  
+  const share = () => {
+    Share.share({
+      message:`${state.name}
+       ${state.image}
+       ${state.subtitle}
+       ${state.type}
+       ${state.per}
+       ${state.description} 
+       ${state.solution}`
+    })
+  }
+// 기본 페이지 로딩
+  const [state, setState] = useState(resultData[5]);
 
-    const [questionState, setQuestionState] = useState(questionnaire[9])
-    
-    return (
-     
-        <View style={styles.container}>
-            
-            {/* <Image source={{uri:questionState.image}} resizeMode="cover" style={styles.questionImage}/> */}
-            <Text style={styles.questionTitle}>{questionState.content.title}</Text>
-            <Text style={styles.question}>{questionState.content.question}</Text>
-            <View style={styles.answerList}>
-                <ScrollView>
-                    {/* 문제에 딸린 답들을 나열 */}
-                    {questionState.content.options.map((a,i)=>{
-                        //결과 화면에선 문제, 문제 이미지, 답, 해설 그리고 히스토리에 저장 할 문제 번호와 답안 번호를 goResult 함수에 넘겨줍니다.
-                        return (
-                        <TouchableOpacity key={i} style={styles.answerView}>
-                            <Text style={styles.answerText} >{a.id + ') ' + a.title}</Text>
-                        </TouchableOpacity>)
-                    })}
-                </ScrollView>
-                <ProgressBarAndroid
-                  style={styles.progressBar}
-                  styleAttr="Horizontal"
-                  color="#2196F3"
-                  indeterminate={false}
-                  progress={1.0}
-                />
-                <View style={styles.buttonGroup}>
-                    <TouchableOpacity style={styles.button02} onPress={() => navigation.goBack()}>
-                       <Text style={styles.buttonText}>Back</Text>
-                   </TouchableOpacity>
-                   <TouchableOpacity style={styles.button02} onPress={() => navigation.popToTop()}>
-                       <Text style={styles.buttonText}>Home</Text>
-                   </TouchableOpacity>
-                   <TouchableOpacity style={styles.button02} onPress={() => navigation.navigate('ResultPage')}>
-                       <Text style={styles.buttonText}>결과 보기</Text>
-                   </TouchableOpacity>
-                </View>
+
+
+  return  (
+  <View style={styles.container}>
+    {/* StatusBar 추가. */}
+      <StatusBar style="light" /> 
+      <View style={styles.titleContainer}>
+          <Text style={styles.title}> 당신의 투자유형은 </Text>
+          <Text style={styles.nameTitle}> [ {state.name} ] </Text>
+      </View>
+      
+      <View style={styles.textContainer}>
+          <View style={styles.imageContainer}>
+            <Image style={styles.aboutImage} source={{uri:state.image}} resizeMode={"stretch"}/>
+            <View>
+               <Text style={styles.subTitle}>{state.subtitle}</Text>
+               <Text style={styles.type}>{state.type}</Text>
+               <Text style={styles.per}>{state.per}</Text>
             </View>
-            
-        </View>
+          </View>
 
-    )
+          <ScrollView>
+              <Text style={styles.desc00}>{state.description}</Text>
+          </ScrollView>
+
+          <Dash style={styles.blockLine} dashColor="black" />
+          <Text style={styles.solution}>{state.solution}</Text>
+          {/* 버튼 컨테이너 */}
+          <View style={styles.buttonGroup}>
+             <TouchableOpacity style={styles.button01} onPress={()=>navigation.popToTop()}>
+                 <Text style={styles.buttonText}>메인으로</Text>
+             </TouchableOpacity>
+             <TouchableOpacity style={styles.button02} onPress={()=>share()}>
+                 <Text style={styles.buttonText}>공유하기</Text>
+             </TouchableOpacity>
+          </View>
+          
+      </View>
+
+  </View>
+  )
 }
 
-export default Question
-
 const styles = StyleSheet.create({
-    container: {
-        flex:1,
-        flexDirection:'column',
-        backgroundColor:"black"
-    },
-    questionImage: {
-        height:100
-    },
-    questionTitle: {
-      padding:20,
-      color:'#1590FF',
-      fontSize: 18
+  container: {
+      flex:1,
+      backgroundColor:"#1F266A",
+      alignItems:"center"
   },
-    question: {
-        padding:20,
-        fontSize:18,
-        color:'#fff',
-    },
-    answerList: {
-        flex:1,
-        padding:20
-    },
-    answerView: {
-        borderRadius:10,
-        borderStyle:'solid',
-        borderColor:"#fff",
-        borderWidth:1,
-        padding:30,
-        marginBottom:10
-    },
-    answerText: {
-        color:"#fff"
-    },
-    progressBar: {
-      marginVertical: 10
-    },
-    buttonGroup: {
-      flexDirection: 'row',
-      justifyContent: 'space-between'
-    },
-    button01:{
-        backgroundColor:"#1590FF",
-        borderRadius:10,
-        padding: 4,
-        paddingLeft: 40,
-        paddingRight: 40
-    },
-    button02:{
-      backgroundColor:"#1590FF",
-      borderRadius:10,
-      padding: 5,
-      paddingLeft: 38,
-      paddingRight: 38
-    },
-    buttonText: {
-        color:"#fff",
-        fontSize:14,
-        fontWeight:"700",
-        textAlign: "center"
-    }
+  titleContainer: {
+      marginTop: 32,
+      paddingTop: 13,
+      paddingBottom: 13,
+      backgroundColor: "black",
+      width: 500
+  },
+  title: {
+      textAlign: "center",
+      fontSize: 18,
+      fontWeight:"600",
+      color:"#fff",
+      // padding을 쓴 이유는 컨테이너 내부에 있는 title이고, 내부 여백을 위해서는 padding.
+      paddingLeft:30,
+      paddingRight:30
+  },
+  nameTitle: {
+    textAlign: "center",
+    fontSize: 34,
+    fontWeight:"700",
+    color:"#fff"
+  },
+  textContainer: {
+      width: 375,
+      height:600,
+      backgroundColor:"#fff",
+      marginTop: 24,
+      borderRadius:20,
+      justifyContent:"center",
+      alignItems:"center"
+  },
+  imageContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    height: 200,
+    width: 380,
+    borderRadius: 5,
+    margin: 10,
+    marginBottom: 20
+  },
+  aboutImage:{
+    height: 180,
+    width: 150,
+    resizeMode: 'stretch',
+    alignItems: 'center',
+    borderRadius: 12,
+    marginTop: 18
+  },
+  subTitle: {
+    fontSize: 13,
+    fontWeight: "bold",
+    textAlign: "left",
+    color: "red"
+  },
+  type: {
+    fontSize: 13,
+    fontWeight: "bold",
+    textAlign: "left",
+    color: "red"
+  },
+  per: {
+    fontSize: 13,
+    fontWeight: "bold",
+    textAlign: "left",
+    color: "red"
+  },
+  desc00: {
+      textAlign:"center",
+      fontSize: 15,
+      fontWeight:"600"
+  },
+  blockLine: {
+    width: 360,
+    height: 1,
+    borderRadius: 100,
+    overflow: 'hidden',
+    marginBottom: 20
+  },
+  solution: {
+    textAlign:"center",
+    fontSize: 15,
+    fontWeight:"bold"
+},
+  buttonGroup: {
+    padding: 6,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    marginBottom: 6 
+  },
+  button01:{
+      backgroundColor:"rgb(76, 55, 232)",
+      padding:20,
+      borderRadius:15,
+      margin: 8,
+      marginRight: 12,
+      width: 130
+  },
+  button02:{
+    backgroundColor:"rgb(76, 55, 232)",
+    padding:20,
+    borderRadius:15,
+    margin: 8,
+    width: 130
+  },
+  buttonText: {
+      color:"#fff",
+      fontSize:15,
+      fontWeight:"700",
+      textAlign: "center"
+  }
 })
