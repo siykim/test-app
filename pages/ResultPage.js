@@ -12,17 +12,16 @@ import { Share } from 'react-native';
 import {firebase_db} from '../firebaseConfig';
 // 로딩페이지
 import ResultLoading from "../components/ResultLoading";
-// import Loading from "../components/Loading";
 // 사용자 id 생성
 import Constants from 'expo-constants';
 
 
 export default function ResultPage( {navigation} ){
   
+  // 공유하기 기능
   const share = () => {
     Share.share({
       message:`${state.name}
-       ${state.image}
        ${state.subtitle}
        ${state.type}
        ${state.per}
@@ -30,7 +29,7 @@ export default function ResultPage( {navigation} ){
        ${state.solution}`
     })
   }
-
+// 기본 페이지 로딩
   const [state, setState] = useState({
     name: '',
     image: 'https://firebasestorage.googleapis.com/v0/b/test-app-81395.appspot.com/o/images%2Fwb.png?alt=media&token=bf1f34fa-c52a-45df-a965-55d53dc87f2b',
@@ -43,7 +42,7 @@ export default function ResultPage( {navigation} ){
 
   const [isLoading, setIsLoading] = useState(true);
 
-
+// 사용자가 선택한 답에 따라 결과 리턴.
   const getResult = (r) => {
     // 주신
     if (
@@ -97,7 +96,7 @@ export default function ResultPage( {navigation} ){
       (r[8].idx === 2 ) &&
       (r[9].idx === 3 )
     ) {return(setState(resultData[3]))}
-    // 거지
+    // 주린이
     else if (
       (r[0].idx === 1 ) &&
       (r[1].idx === 4 ) &&
@@ -123,14 +122,17 @@ export default function ResultPage( {navigation} ){
       (r[8].idx === 1 || r[8].idx === 2 || r[8].idx === 3 ) &&
       (r[9].idx === 1 || r[9].idx === 3 || r[9].idx === 4 )
     ) {return(setState(resultData[5]))}
+    // 해당 안되는 경우 개미 return
     else {
-      return(setState(resultData[0]))
+      return(setState(resultData[5]))
     }
   }
 
 
   useEffect(() => {
+    // 사용자id 입수.
     const user_id = Constants.installationId;
+    // 질문들 답안 가져오기.
     firebase_db.ref('/history/'+user_id).once('value').then((snapshot) => {
       let history = snapshot.val();
       
@@ -145,25 +147,33 @@ export default function ResultPage( {navigation} ){
   <View style={styles.container}>
     {/* StatusBar 추가. */}
       <StatusBar style="light" /> 
-      <Text style={styles.title}> _당신의_투자유형은_ </Text>
-      <Text style={styles.nameTitle}> [ {state.name} ] </Text>
+      {/* 타이틀 콘테이너 */}
+      <View style={styles.titleContainer}>
+          <Text style={styles.title}> 당신의 투자유형은 </Text>
+          <Text style={styles.nameTitle}> [ {state.name} ] </Text>
+      </View>
 
-      
+      {/* 텍스트 콘테이너 */}
       <View style={styles.textContainer}>
+      {/* 이미지, 수익률, 투자유형, 비율 부분 */}
           <View style={styles.imageContainer}>
             <Image style={styles.aboutImage} source={{uri:state.image}} resizeMode={"stretch"}/>
             <View>
-               <Text style={styles.desc00}>{state.subtitle}</Text>
-               <Text style={styles.desc00}>{state.type}</Text>
-               <Text style={styles.desc00}>{state.per}</Text>
+               <Text style={styles.subTitle}>{state.subtitle}</Text>
+               <Text style={styles.type}>{state.type}</Text>
+               <Text style={styles.per}>{state.per}</Text>
             </View>
           </View>
 
+          {/* 설명부분 */}
           <ScrollView>
-              <Text style={styles.desc01}>{state.description}</Text>
+              <Text style={styles.desc00}>{state.description}</Text>
           </ScrollView>
+
           <Dash style={styles.blockLine} dashColor="black" />
-          <Text style={styles.desc02}>{state.solution}</Text>
+          {/* 솔루션 부분 */}
+          <Text style={styles.solution}>{state.solution}</Text>
+          {/* 버튼 컨테이너 */}
           <View style={styles.buttonGroup}>
              <TouchableOpacity style={styles.button01} onPress={()=>navigation.popToTop()}>
                  <Text style={styles.buttonText}>메인으로</Text>
@@ -172,8 +182,11 @@ export default function ResultPage( {navigation} ){
                  <Text style={styles.buttonText}>공유하기</Text>
              </TouchableOpacity>
           </View>
+          
       </View>
-  </View>)
+
+  </View>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -182,14 +195,19 @@ const styles = StyleSheet.create({
       backgroundColor:"#1F266A",
       alignItems:"center"
   },
+  titleContainer: {
+      marginTop: 10,
+      paddingTop: 10,
+      paddingBottom: 10,
+      backgroundColor: "black",
+      width: 500
+  },
   title: {
       textAlign: "center",
       fontSize: 18,
       fontWeight:"600",
       color:"#fff",
-      // padding을 쓴 이유는 컨테이너 내부에 있는 title이고, 내부 여백을 위해서는 padding.
       paddingLeft:30,
-      paddingTop:16,
       paddingRight:30
   },
   nameTitle: {
@@ -199,10 +217,10 @@ const styles = StyleSheet.create({
     color:"#fff"
   },
   textContainer: {
-      width: 380,
-      height:620,
+      width: 375,
+      height:600,
       backgroundColor:"#fff",
-      marginTop:15, // 바깥여백이므로 margin
+      marginTop: 18,
       borderRadius:20,
       justifyContent:"center",
       alignItems:"center"
@@ -218,20 +236,33 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   aboutImage:{
-    height: 200,
+    height: 180,
     width: 150,
     resizeMode: 'stretch',
     alignItems: 'center',
-    borderRadius: 20
+    borderRadius: 12,
+    marginTop: 18
   },
-  desc00: {
+  subTitle: {
     fontSize: 13,
     fontWeight: "bold",
     textAlign: "left",
     color: "red"
   },
-  desc01: {
-      textAlign:"left",
+  type: {
+    fontSize: 13,
+    fontWeight: "bold",
+    textAlign: "left",
+    color: "red"
+  },
+  per: {
+    fontSize: 13,
+    fontWeight: "bold",
+    textAlign: "left",
+    color: "red"
+  },
+  desc00: {
+      textAlign:"center",
       fontSize: 15,
       fontWeight:"600"
   },
@@ -242,29 +273,31 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginBottom: 20
   },
-  desc02: {
+  solution: {
     textAlign:"center",
-    fontSize: 18,
+    fontSize: 15,
     fontWeight:"bold"
 },
   buttonGroup: {
-    padding: 10,
+    padding: 6,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 30 
+    marginTop: 20,
+    marginBottom: 6 
   },
   button01:{
       backgroundColor:"rgb(76, 55, 232)",
       padding:20,
       borderRadius:15,
-      margin: 5,
+      margin: 8,
+      marginRight: 12,
       width: 130
   },
   button02:{
     backgroundColor:"rgb(76, 55, 232)",
     padding:20,
     borderRadius:15,
-    margin: 5,
+    margin: 8,
     width: 130
   },
   buttonText: {
