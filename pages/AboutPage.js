@@ -5,8 +5,6 @@ import * as Linking from 'expo-linking';
 import aboutpage from '../assets/aboutpage.png';
 import { createStackNavigator } from '@react-navigation/stack';
 
-
-//  <Stack.Screen name="꿀팁 찜" component={LikePage}/>을 통해 페이지 기능을 갖추면 navigation이라는 기능 사용 가능.
 export default function AboutPage({ navigation }){
   
   //   const link = () => {
@@ -43,7 +41,6 @@ const styles = StyleSheet.create({
         fontSize:30,
         fontWeight:"600",
         color:"#fff",
-        // padding을 쓴 이유는 컨테이너 내부에 있는 title이고, 내부 여백을 위해서는 padding.
         paddingLeft:30,
         paddingTop:60,
         paddingRight:30
@@ -52,7 +49,7 @@ const styles = StyleSheet.create({
         width:350,
         height:550,
         backgroundColor:"#fff",
-        marginTop:50, // 바깥여백이므로 margin
+        marginTop:50,
         borderRadius:30,
         justifyContent:"center",
         alignItems:"center"

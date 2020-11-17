@@ -1,27 +1,32 @@
 import React,{useEffect,useState} from 'react';
-import {View,Text,Image,ScrollView,StyleSheet, Button, TouchableOpacity, ProgressBarAndroid} from 'react-native'
-import { createStackNavigator } from '@react-navigation/stack';
+import {View,Text,ImageBackground,ScrollView,StyleSheet, TouchableOpacity, ProgressBarAndroid} from 'react-native'
 import Loading from '../components/Loading';
 import {firebase_db} from "../firebaseConfig";
 import Constants from 'expo-constants';
 
 const Question = ( {navigation} ) => {
 
-
+  // 질문 이미지
+    const image = { uri: "https://firebasestorage.googleapis.com/v0/b/test-app-81395.appspot.com/o/images%2Fback1.png?alt=media&token=03f3549f-f003-4398-a617-5a4a45d4323b" };
+  
+  // 데이터 상태 변경
     const [questionState, setQuestionState] = useState();
+
+  // 준비 페이지
     const [ready, setReady] = useState(true);
 
 
     useEffect(() => {
-
+        // 파이어베이스에서 질문 데이터 입수
         firebase_db.ref('/question').once('value').then((snapshot) => {
-          console.log("파이어베이스에서 데이터 입수")
+          console.log("파이어베이스에서 Q1 데이터 입수")
           let question =snapshot.val();
           setQuestionState(question[0])
           setReady(false)
         })
     }, [])
 
+      // 사용자가 답 클릭하면 파이어베이스에 데이터 저장.
         const user_id = Constants.installationId;
         const goResult = (data) => {
 
@@ -49,11 +54,23 @@ const Question = ( {navigation} ) => {
     return ready ? <Loading/> : (
      
         <View style={styles.container}>
-            
-            {/* <Image source={{uri:questionState.image}} resizeMode="cover" style={styles.questionImage}/> */}
-            <Text style={styles.questionTitle}>{questionState.title + ' / 10'}</Text>
+            {/* 질문과 질문 이미지 */}
+            <ImageBackground 
+            source={image} 
+            style={{
+              resizeMode: "cover",
+              justifyContent: "center",
+              borderRadius: 20,
+              height: 85
+            }} 
+            imageStyle={{opacity:0.3}}>
+              <Text style={styles.questionTitle}>{questionState.title + ' / 10'}</Text>
+            </ImageBackground>
+    
             <Text style={styles.question}>{questionState.question}</Text>
+            {/* 보기 콘테이너 */}
             <View style={styles.answerList}>
+            {/* 보기 정보 */}
                 <ScrollView>
                     {questionState.answer.map((data,i)=>{
                         return (
@@ -62,6 +79,7 @@ const Question = ( {navigation} ) => {
                         </TouchableOpacity>)
                     })}
                 </ScrollView>
+                {/* 진행상태바 */}
                 <ProgressBarAndroid
                   style={styles.progressBar}
                   styleAttr="Horizontal"
@@ -69,6 +87,7 @@ const Question = ( {navigation} ) => {
                   indeterminate={false}
                   progress={0.1}
                 />
+                {/* 버튼 그룹 */}
                 <View style={styles.buttonGroup}>
                     <TouchableOpacity style={styles.button02} onPress={() => navigation.goBack()}>
                        <Text style={styles.buttonText}>Back</Text>
@@ -94,9 +113,6 @@ const styles = StyleSheet.create({
         flex:1,
         flexDirection:'column',
         backgroundColor:"black"
-    },
-    questionImage: {
-        height:100
     },
     questionTitle: {
         padding:20,
@@ -124,7 +140,7 @@ const styles = StyleSheet.create({
         color:"#fff"
     },
     progressBar: {
-      marginVertical: 30
+      marginVertical: 20
     },
     buttonGroup: {
       flexDirection: 'row',
@@ -140,9 +156,9 @@ const styles = StyleSheet.create({
     button02:{
       backgroundColor:"#1590FF",
       borderRadius:10,
-      padding: 5,
-      paddingLeft: 38,
-      paddingRight: 38
+      padding: 10,
+      paddingLeft: 40,
+      paddingRight: 40
     },
     buttonText: {
         color:"#fff",

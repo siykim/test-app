@@ -1,13 +1,12 @@
 import React,{useEffect,useState} from 'react';
-import {View,Text,Image,ScrollView,StyleSheet, Button, TouchableOpacity, ProgressBarAndroid} from 'react-native'
-import { createStackNavigator } from '@react-navigation/stack';
+import {View,Text,ImageBackground,ScrollView,StyleSheet, TouchableOpacity, ProgressBarAndroid} from 'react-native'
 import Loading from '../components/Loading';
 import {firebase_db} from "../firebaseConfig";
 import Constants from 'expo-constants';
 
 const Question = ( {navigation} ) => {
 
-
+    const image = { uri: "https://firebasestorage.googleapis.com/v0/b/test-app-81395.appspot.com/o/images%2Fback5.jpg?alt=media&token=a2cff099-4b2b-4378-8620-ae6360e5ecff" };
     const [questionState, setQuestionState] = useState();
     const [ready, setReady] = useState(true);
 
@@ -15,7 +14,7 @@ const Question = ( {navigation} ) => {
     useEffect(() => {
 
         firebase_db.ref('/question').once('value').then((snapshot) => {
-          console.log("파이어베이스에서 데이터 입수")
+          console.log("파이어베이스에서 Q5 데이터 입수")
           let question =snapshot.val();
           setQuestionState(question[4])
           setReady(false)
@@ -50,8 +49,18 @@ const Question = ( {navigation} ) => {
      
         <View style={styles.container}>
             
-            {/* <Image source={{uri:questionState.image}} resizeMode="cover" style={styles.questionImage}/> */}
-            <Text style={styles.questionTitle}>{questionState.title + ' / 10'}</Text>
+            <ImageBackground 
+            source={image} 
+            style={{
+              resizeMode: "cover",
+              justifyContent: "center",
+              borderRadius: 20,
+              height: 85
+            }} 
+            imageStyle={{opacity:0.3}}>
+              <Text style={styles.questionTitle}>{questionState.title + ' / 10'}</Text>
+            </ImageBackground>
+
             <Text style={styles.question}>{questionState.question}</Text>
             <View style={styles.answerList}>
                 <ScrollView>
@@ -90,64 +99,61 @@ const Question = ( {navigation} ) => {
 export default Question
 
 const styles = StyleSheet.create({
-    container: {
-        flex:1,
-        flexDirection:'column',
-        backgroundColor:"black"
-    },
-    questionImage: {
-        height:100
-    },
-    questionTitle: {
-        padding:20,
-        color:'#1590FF',
-        fontSize: 18
-    },
-    question: {
-        padding:20,
-        fontSize:18,
-        color:'#fff',
-    },
-    answerList: {
-        flex:1,
-        padding:20
-    },
-    answerView: {
-        borderRadius:10,
-        borderStyle:'solid',
-        borderColor:"#fff",
-        borderWidth:1,
-        padding:30,
-        marginBottom:10
-    },
-    answerText: {
-        color:"#fff"
-    },
-    progressBar: {
-      marginVertical: 10
-    },
-    buttonGroup: {
-      flexDirection: 'row',
-      justifyContent: 'space-between'
-    },
-    button01:{
-        backgroundColor:"#1590FF",
-        borderRadius:10,
-        padding: 4,
-        paddingLeft: 40,
-        paddingRight: 40
-    },
-    button02:{
+  container: {
+      flex:1,
+      flexDirection:'column',
+      backgroundColor:"black"
+  },
+  questionTitle: {
+      padding:20,
+      color:'#1590FF',
+      fontSize: 18
+  },
+  question: {
+      padding:20,
+      fontSize:18,
+      color:'#fff',
+  },
+  answerList: {
+      flex:1,
+      padding:20
+  },
+  answerView: {
+      borderRadius:10,
+      borderStyle:'solid',
+      borderColor:"#fff",
+      borderWidth:1,
+      padding:30,
+      marginBottom:10
+  },
+  answerText: {
+      color:"#fff"
+  },
+  progressBar: {
+    marginVertical: 20
+  },
+  buttonGroup: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  button01:{
       backgroundColor:"#1590FF",
       borderRadius:10,
-      padding: 5,
-      paddingLeft: 38,
-      paddingRight: 38
-    },
-    buttonText: {
-        color:"#fff",
-        fontSize:14,
-        fontWeight:"700",
-        textAlign: "center"
-    }
+      padding: 4,
+      paddingLeft: 40,
+      paddingRight: 40
+  },
+  button02:{
+    backgroundColor:"#1590FF",
+    borderRadius:10,
+    padding: 10,
+    paddingLeft: 40,
+    paddingRight: 40
+  },
+  buttonText: {
+      color:"#fff",
+      fontSize:14,
+      fontWeight:"700",
+      textAlign: "center"
+  }
 })

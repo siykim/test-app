@@ -15,9 +15,9 @@ import Question7 from '../pages/Question7';
 import Question8 from '../pages/Question8';
 import Question9 from '../pages/Question9';
 import Question10 from '../pages/Question10';
-
-
-import splash from '../assets/splash.png';
+import ExplainPage01 from '../pages/ExplainPage01';
+import ExplainPage02 from '../pages/ExplainPage02';
+import ExplainPage03 from '../pages/ExplainPage03';
 
 // 스택 네비게이션 라이브러리가 제공해주는 여러 기능을 담고 있는 객체 생성.
 const Stack = createStackNavigator();
@@ -53,6 +53,9 @@ const StackNavigator = () => {
     <Stack.Screen name="Question8" component={Question8}/>
     <Stack.Screen name="Question9" component={Question9}/>
     <Stack.Screen name="Question10" component={Question10}/>
+    <Stack.Screen name="ExplainPage01" component={ExplainPage01}/>
+    <Stack.Screen name="ExplainPage02" component={ExplainPage02}/>
+    <Stack.Screen name="ExplainPage03" component={ExplainPage03}/>
 
     </Stack.Navigator>
   )

@@ -5,6 +5,9 @@ import StackNavigator from './navigation/StackNavigator';
 import Test from './pages/Test';
 import Loading from './components/Loading'
 import ResultLoading from './components/ResultLoading';
+import ExplainPage01 from './pages/ExplainPage01';
+import ExplainPage02 from './pages/ExplainPage02';
+import ExplainPage03 from './pages/ExplainPage02';
 
 export default function App() {
 
@@ -15,6 +18,8 @@ export default function App() {
  </NavigationContainer>
   // <Test />
   // <ResultLoading />
+  // <ExplainPage03 />
+
 
  );
 }
